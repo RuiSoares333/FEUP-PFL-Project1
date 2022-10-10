@@ -17,16 +17,19 @@ split c s = firstWord : (split c rest)
    3. Partir os "*" - problema quando tem 1, nao tem variavel x
    4. Partir os "^" - problema quando tem 0 pq nao tem "^", quando tem 1 pq nao existe o "1"-}
 
-hakuna :: String -> [String]{-[(a, a, a)]-}
-hakuna s = facildizer (matata [ x | x <- split '+' (removeChar ' ' s)])
+hakuna :: String -> [(String, String)]
+hakuna s = matata [ x | x <- split '+' (removeChar ' ' s)]
 {-
 hakuna1 :: String -> [String]
 hakuna1 s = [ x | x <- split '*' s]-}
 
-matata :: [String] -> (a, a)
-matata [] = []
-matata (x:xs) =  split '*' x ++ matata xs
+tuplify2 :: [a] -> (a, a)
+tuplify2 [x, y] = (x, y)
 
-facildizer :: [(a, a)] -> [(a, a, a)]
+matata :: [String] -> [(String, String)]
+matata [] = []
+matata (x:xs) =  [tuplify2(split '*' x)] ++ matata xs
+
+{-facildizer :: [(a, a)] -> [(a, a, a)]
 facildizer [] = []
-facildizer t = split '^' snd t ++ facildizer xs
+facildizer t = split '^' snd t ++ facildizer xs-}

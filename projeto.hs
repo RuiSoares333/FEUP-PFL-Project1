@@ -1,9 +1,8 @@
-removeChar :: Char -> String -> String {-usar para remover os espaços-}
-removeChar _ [] = []
-removeChar ch (c:cs)
-    | c == ch   = removeChar ch cs
-    | otherwise = c:(removeChar ch cs)
+data Variavel = RegVar Char Int deriving Show-- [x, 2] = x^2
 
+data Expressao = RegEx Int Variavel deriving Show-- [5, [x, 2]] = 5*x^2
+data Arv a = Vazia 
+            | No Char (Arv a) (Arv a)
 
 split :: Char -> String -> [String] {-várias chamadas para sucessivamente partir a expressão-}
 split _ "" = []
@@ -12,20 +11,36 @@ split c s = firstWord : (split c rest)
           rest = drop (length firstWord + 1) s
 
 
+
+
 {- 1. Receber a string 
    2. Partir os "+"
    3. Partir os "*" - problema quando tem 1, nao tem variavel x
    4. Partir os "^" - problema quando tem 0 pq nao tem "^", quando tem 1 pq nao existe o "1"-}
 
+hakuna :: String -> [[String]]
+hakuna s = matata [ x | x <- split '+' (removeEspaco s)]
 
-entrada :: String -> [[[String]]]
-entrada s = map prod (espacos s)
+removeEspaco :: String -> String
+removeEspaco s = [x | x <- s, x/=' ']
 
-espacos :: String -> [String]
-espacos s = split ' ' s
+simpMenos :: String -> String
+simpMenos [] = ""
+simpMenos (x:xs) 
+        | x == '-' = "+-" ++ simpMenos xs
+        | otherwise =  x : simpMenos xs
 
-prod :: String -> [[String]]
-prod s = map poten (split '*' s)
+{-
+hakuna1 :: String -> [String]
+hakuna1 s = [ x | x <- split '*' s]-}
 
-poten :: String -> [String]
-poten s = split '^' s
+tuplify2 :: [a] -> (a, a)
+tuplify2 [x, y] = (x, y)
+
+matata :: [String] -> [[String]]
+matata [] = []
+matata (x:xs) =  [split '*' x] ++ matata xs
+
+{-facildizer :: [(a, a)] -> [(a, a, a)]
+facildizer [] = []
+facildizer t = split '^' snd t ++ facildizer xs-}

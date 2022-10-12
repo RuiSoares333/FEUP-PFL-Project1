@@ -3,7 +3,7 @@ data Variavel = RegVar Char Int deriving Show-- [x, 2] = x^2
 data Expressao = RegEx Int Variavel deriving Show-- [5, [x, 2]] = 5*x^2
 data Arv a = Vazia 
             | NoChar Char (Arv a) (Arv a)
-            | NoInt Int (Arv a) (Arv a)
+            | NoInt Int (Arv a) (Arv a) deriving Show
 
 split :: Char -> String -> [String] {-várias chamadas para sucessivamente partir a expressão-}
 split _ "" = []
@@ -13,11 +13,30 @@ split c s = firstWord : (split c rest)
 
 
 
-
+-- Desconstruir a String : Feito
 {- 1. Receber a string 
    2. Partir os "+"
    3. Partir os "*" - problema quando tem 1, nao tem variavel x
    4. Partir os "^" - problema quando tem 0 pq nao tem "^", quando tem 1 pq nao existe o "1"-}
+
+-- Construir a arvore
+-- 1. Separar o polinómio pela metade   :  [[["5"],["x","2"]],[["-10"],["y","3"],["x","2"]]] -> [["5"],["x","2"]]  &  [["-10"],["y","3"],["x","2"]]
+        -- 1.5 separa-los na arvore com '+'
+
+-- 2. Separar os coeficientes pela metade   :   [["5"],["x","2"]] ->  ["5"]   &   ["x","2"]
+        -- 2.5 separa-los com '*'
+
+-- 3. Separar as variaveis das potencias : ["x","2"] ->  "x"   &   "2"
+        -- 3.5 separa-los com  '^'
+
+
+paraArv :: [[[String]]] -> Arv a
+paraArv [] = Vazia
+paraArv s = NoInt 1 Vazia Vazia
+
+ArvUmaVar :: [[String]] -> Arv a
+ArvUmaVar l = NoChar '*' NoInt l
+
 
 entrada :: String -> [[[String]]]
 entrada s = tiraVezes (tiraMais (simpMenos (removeEspaco s)))

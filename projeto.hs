@@ -1,3 +1,5 @@
+import Data.Char (isDigit)
+
 data Variavel = RegVar Char Int deriving Show-- [x, 2] = x^2
 
 data Expressao = RegEx Int Variavel deriving Show-- [5, [x, 2]] = 5*x^2
@@ -6,7 +8,7 @@ data Arv a = Vazia
             | NoSoma Char (Arv a) (Arv a)
             | NoProd Char (Arv a) (Arv a)
             | NoPoten Char (Arv a) (Arv a)
-            | NoVar Char 
+            | NoVar String 
             | NoNum Int deriving Show
 
 split :: Char -> String -> [String] {-várias chamadas para sucessivamente partir a expressão-}
@@ -23,7 +25,7 @@ split c s = firstWord : (split c rest)
    3. Partir os "*" - problema quando tem 1, nao tem variavel x
    4. Partir os "^" - problema quando tem 0 pq nao tem "^", quando tem 1 pq nao existe o "1"-}
 
--- Construir a arvore
+-- Construir a arvore : Feito
 -- 1. Separar o polinómio pela metade   :  [[["5"],["x","2"]],[["-10"],["y","3"],["x","2"]]] -> [["5"],["x","2"]]  &  [["-10"],["y","3"],["x","2"]]
         -- 1.5 separa-los na arvore com '+'
 
@@ -48,9 +50,40 @@ separaCoef coef
 
 separaFolha :: [String] -> Arv a
 separaFolha e
-        | s == 1 = NoNum (read (head e) :: Int)
-        | otherwise = NoPoten '^' (NoVar (head (head e))) (NoNum (read (head (tail e)) :: Int))
+        | s == 1 = numOuVar (head e)
+        | otherwise = NoPoten '^' (NoVar (head e)) (NoNum (read (head (tail e)) :: Int))
         where s = length e
+
+numOuVar :: String -> Arv a
+numOuVar e
+        | v = NoNum (read e :: Int)
+        | otherwise = NoPoten '^'  (NoVar e) (NoNum 1)
+        where v = checkIfDigit e
+
+
+myIsDigit :: Char -> Bool
+myIsDigit '0' = True
+myIsDigit '1' = True
+myIsDigit '2' = True
+myIsDigit '3' = True
+myIsDigit '4' = True
+myIsDigit '5' = True
+myIsDigit '6' = True
+myIsDigit '7' = True
+myIsDigit '8' = True
+myIsDigit '9' = True
+myIsDigit _ = False
+
+checkIfDigit :: String -> Bool
+checkIfDigit [] = True
+checkIfDigit (x:xs)
+        | v = checkIfDigit xs
+        | otherwise = False
+        where v = isDigit x
+
+
+
+
 
 entrada :: String -> [[[String]]]
 entrada s = tiraVezes (tiraMais (simpMenos (removeEspaco s)))
@@ -66,9 +99,6 @@ simpMenos (x:xs)
 
 tiraMais :: String -> [String]
 tiraMais s =  split '+' s
-
-tuplify2 :: [a] -> (a, a)
-tuplify2 [x, y] = (x, y)
 
 tiraVezes :: [String] -> [[[String]]]
 tiraVezes [] = []

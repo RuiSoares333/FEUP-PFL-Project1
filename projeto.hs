@@ -36,19 +36,21 @@ split c s = firstWord : (split c rest)
 
 separaPoli :: [[[String]]] -> Arv a
 separaPoli lCoef
-        | s==1 = separaCoef (head lCoef)
+        | s == 0 = separaCoef (head lCoef)
         | otherwise = NoSoma '+' (separaPoli (take s lCoef)) (separaPoli (drop s lCoef))
         where s = (length lCoef) `div` 2
 
 separaCoef :: [[String]] -> Arv a
-separaCoef [_] = Vazia
-separaCoef coef =
-        NoProd '*' (separaCoef (take s coef)) (separaCoef (drop s coef))
+separaCoef coef
+        | s == 0 = separaFolha (head coef)
+        | otherwise = NoProd '*' (separaCoef (take s coef)) (separaCoef (drop s coef))
         where s = (length coef) `div` 2
 
-separaPoten :: [String] -> Arv a
-separaPoten var =
-        NoPoten '^' (NoVar head var) (NoNum (read (tail var) :: Int))
+separaFolha :: [String] -> Arv a
+separaFolha e
+        | s == 1 = NoNum (read (head e) :: Int)
+        | otherwise = NoPoten '^' (NoVar (head (head e))) (NoNum (read (head (tail e)) :: Int))
+        where s = length e
 
 entrada :: String -> [[[String]]]
 entrada s = tiraVezes (tiraMais (simpMenos (removeEspaco s)))

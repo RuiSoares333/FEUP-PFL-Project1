@@ -1,9 +1,13 @@
 data Variavel = RegVar Char Int deriving Show-- [x, 2] = x^2
 
 data Expressao = RegEx Int Variavel deriving Show-- [5, [x, 2]] = 5*x^2
+
 data Arv a = Vazia 
-            | NoChar Char (Arv a) (Arv a)
-            | NoInt Int (Arv a) (Arv a) deriving Show
+            | NoSoma Char (Arv a) (Arv a)
+            | NoProd Char (Arv a) (Arv a)
+            | NoPoten Char (Arv a) (Arv a)
+            | NoVar Char 
+            | NoNum Int deriving Show
 
 split :: Char -> String -> [String] {-várias chamadas para sucessivamente partir a expressão-}
 split _ "" = []
@@ -30,13 +34,21 @@ split c s = firstWord : (split c rest)
         -- 3.5 separa-los com  '^'
 
 
-paraArv :: [[[String]]] -> Arv a
-paraArv [] = Vazia
-paraArv s = NoInt 1 Vazia Vazia
+separaPoli :: [[[String]]] -> Arv a
+separaPoli lCoef
+        | s==1 = separaCoef (head lCoef)
+        | otherwise = NoSoma '+' (separaPoli (take s lCoef)) (separaPoli (drop s lCoef))
+        where s = (length lCoef) `div` 2
 
-ArvUmaVar :: [[String]] -> Arv a
-ArvUmaVar l = NoChar '*' NoInt l
+separaCoef :: [[String]] -> Arv a
+separaCoef [_] = Vazia
+separaCoef coef =
+        NoProd '*' (separaCoef (take s coef)) (separaCoef (drop s coef))
+        where s = (length coef) `div` 2
 
+separaPoten :: [String] -> Arv a
+separaPoten var =
+        NoPoten '^' (NoVar head var) (NoNum (read (tail var) :: Int))
 
 entrada :: String -> [[[String]]]
 entrada s = tiraVezes (tiraMais (simpMenos (removeEspaco s)))

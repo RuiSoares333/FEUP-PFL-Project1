@@ -1,5 +1,3 @@
-import Data.Char (isDigit)
-
 data Variavel = RegVar Char Int deriving Show-- [x, 2] = x^2
 
 data Expressao = RegEx Int Variavel deriving Show-- [5, [x, 2]] = 5*x^2
@@ -11,7 +9,7 @@ data Arv a = Vazia
             | NoVar String 
             | NoNum Int deriving Show
 
-split :: Char -> String -> [String] {-várias chamadas para sucessivamente partir a expressão-}
+split :: Char -> String -> [String]
 split _ "" = []
 split c s = firstWord : (split c rest)
     where firstWord = takeWhile (/=c) s
@@ -38,6 +36,7 @@ split c s = firstWord : (split c rest)
 
 separaPoli :: [[[String]]] -> Arv a
 separaPoli lCoef
+        | head lCoef == [] = separaPoli (tail lCoef)
         | s == 0 = separaCoef (head lCoef)
         | otherwise = NoSoma '+' (separaPoli (take s lCoef)) (separaPoli (drop s lCoef))
         where s = (length lCoef) `div` 2
@@ -72,6 +71,7 @@ myIsDigit '6' = True
 myIsDigit '7' = True
 myIsDigit '8' = True
 myIsDigit '9' = True
+myIsDigit '-' = True
 myIsDigit _ = False
 
 checkIfDigit :: String -> Bool
@@ -79,7 +79,7 @@ checkIfDigit [] = True
 checkIfDigit (x:xs)
         | v = checkIfDigit xs
         | otherwise = False
-        where v = isDigit x
+        where v = myIsDigit x
 
 
 
@@ -93,7 +93,8 @@ removeEspaco s = [x | x <- s, x/=' ']
 
 simpMenos :: String -> String
 simpMenos [] = ""
-simpMenos (x:xs) 
+simpMenos (x:xs)
+        | x == '^' = x : head xs : simpMenos (tail xs)
         | x == '-' = "+-" ++ simpMenos xs
         | otherwise =  x : simpMenos xs
 

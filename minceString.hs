@@ -10,6 +10,7 @@ module MinceString where
 
 ---- Chamada de todas as funções que transforma um input do tipo: "5*x^2" -> [[["5"],["x","2"]]]
 trataString :: String -> [[[String]]]
+trataString [] = [[[]]]
 trataString s = tiraVezes (tiraMais (simpMenos (removeEspaco s)))
 
 

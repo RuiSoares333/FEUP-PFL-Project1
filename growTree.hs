@@ -21,6 +21,7 @@ data Arv a = Vazia
 ---- Chama todas as funcoes e transforma um input do tipo [[["7"],["x","2"]]] -> NoProd '*' (NoNum 7) (NoPoten '^' (NoVar "x") (NoNum 2))
 ---- tambem separa os termos de uma expressao com NoSoma's
 separaPoli :: [[[String]]] -> Arv a
+separaPoli [[[]]] = Vazia
 separaPoli lCoef
         | head lCoef == [] = separaPoli (tail lCoef)
         | s == 0 = separaCoef (head lCoef)
@@ -30,18 +31,24 @@ separaPoli lCoef
 
 -- separa as variaveis dentro de um termo com NoProd's
 separaCoef :: [[String]] -> Arv a
+separaCoef [[]] = Vazia
 separaCoef coef
         | s == 0 = separaFolha (head coef)
         | otherwise = NoProd '*' (separaCoef (take s coef)) (separaCoef (drop s coef))
         where s = (length coef) `div` 2
 
 
+
 -- decide se uma folha da arvore e um numero ou uma variavel
 separaFolha :: [String] -> Arv a
+separaFolha [] = Vazia
 separaFolha e
+        | v = NoProd '*' (NoNum (-1)) (separaFolha ((tail (head e)) : (tail e)))
         | s == 1 = numOuVar (head e)
         | otherwise = NoPoten '^' (NoVar (head e)) (NoNum (read (head (tail e)) :: Int))
-        where s = length e
+        where 
+                s = length e
+                v = head (head e) == '-' && (not)(checkIfDigit(tail (head e)))
 
 
 -- verifica se uma string e um numero ou nao

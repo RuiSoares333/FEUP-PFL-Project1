@@ -1,3 +1,5 @@
+module GrowTree where
+
 import MinceString
 
 data Arv a = Vazia 
@@ -6,6 +8,8 @@ data Arv a = Vazia
             | NoPoten Char (Arv a) (Arv a) --  potencia de uma variavel
             | NoVar String                 -- variavel em string
             | NoNum Int deriving Show      -- coeficiente
+
+digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-']
 
 -- Construir a arvore : Feito
 -- 1. Separar o polinomio pela metade   :  [[["5"],["x","2"]],[["-10"],["y","3"],["x","2"]]] -> [["5"],["x","2"]]  &  [["-10"],["y","3"],["x","2"]]
@@ -66,19 +70,11 @@ checkIfDigit [] = True
 checkIfDigit (x:xs)
         | v = checkIfDigit xs
         | otherwise = False
-        where v = myIsDigit x
+        where v = myIsDigit x digits
 
--- funcao auxiliar para vetrificar se um char e um digito
-myIsDigit :: Char -> Bool
-myIsDigit '0' = True
-myIsDigit '1' = True
-myIsDigit '2' = True
-myIsDigit '3' = True
-myIsDigit '4' = True
-myIsDigit '5' = True
-myIsDigit '6' = True
-myIsDigit '7' = True
-myIsDigit '8' = True
-myIsDigit '9' = True
-myIsDigit '-' = True
-myIsDigit _ = False
+-- funcao auxiliar para verificar se um char e um digito
+myIsDigit :: Char -> [Char] -> Bool
+myIsDigit _ []= False
+myIsDigit n (x:xs)
+  | x == n = True
+  | otherwise = myIsDigit n xs

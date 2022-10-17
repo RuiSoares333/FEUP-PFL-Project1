@@ -14,9 +14,8 @@ import Data.Char
 -- concatenar com o coef com *
 -- concatenar tudo com +
 normPoli :: Arv a -> String
--- normPoli Vazia = Vazia
--- normPoli (NoNum a) = a
-normPoli a = ( juntaSoma (concatCoefs coefs (concatVars vars)))
+normPoli Vazia = ""
+normPoli a = simpIndep (juntaSoma (concatCoefs coefs (concatVars vars)))
     where
         vars = (varEx a)
         coefs = somaTermos (listaArv a) vars (populateList (length vars))
@@ -67,7 +66,7 @@ concatVarsAux [a] = a
 concatVarsAux (x:xs) = x ++ "*" ++ (concatVarsAux xs)
 
 concatCoefs :: [Int] -> [String] -> [String]
-concatCoefs coef var = zipWith (++) (zipWith (++) c ([] : (take (n-1) (repeat "*")))) var
+concatCoefs coef var = zipWith (++) (zipWith (++) c ((take n (repeat "*")))) var
     where 
         n = length coef
         c = [show x | x<-coef]
@@ -76,6 +75,12 @@ concatCoefs coef var = zipWith (++) (zipWith (++) c ([] : (take (n-1) (repeat "*
 juntaSoma :: [String] -> String
 juntaSoma [a] = a
 juntaSoma (x:xs) = x ++ " + " ++ (juntaSoma xs)
+
+simpIndep :: String -> String
+simpIndep [] = []
+simpIndep (x:xs)
+    | x == '*' && (xs == "" || (head xs) == ' ')  = xs
+    | otherwise = x : (simpIndep xs)
 
 
 normSumPoli :: Arv a -> Arv a -> Arv a

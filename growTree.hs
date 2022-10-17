@@ -1,7 +1,5 @@
 module GrowTree where
 
-import MinceString
-
 data Arv a = Vazia 
             | NoSoma Char (Arv a) (Arv a) -- soma entre dois termos
             | NoProd Char (Arv a) (Arv a) -- produto entre cada elemento de um termo

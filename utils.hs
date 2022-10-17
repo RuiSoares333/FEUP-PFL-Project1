@@ -1,0 +1,1 @@
+-- TODO Funçoes comuns

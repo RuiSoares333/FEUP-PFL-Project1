@@ -1,9 +1,10 @@
+module NormExp where
+
 import GrowTree
 import MinceString
 import VarsExistentes
 
 import Data.List
-import Data.Char
 -- Pegar num NoSoma -> (NoSoma x l r)
 -- Ver ls e rs
 -- Ver o left e right de ls e rs
@@ -27,7 +28,7 @@ somaTermos [] p l = l
 somaTermos (x:xs) p l = somaTermos xs p (insertInIndex id l coef)
     where 
         coef = (foldr (*) 1 (findNoNum x))
-        id = (myFindIndex (varExProd x) p 0)
+        id = (myFindIndex1 (varExProd x) p 0)
 
 listaArv :: Arv a -> [Arv a]
 listaArv (NoSoma x l r) = (listaArv l) ++ (listaArv r)
@@ -50,10 +51,10 @@ findNoNum (NoProd x l r) = (findNoNum l) ++ (findNoNum r)
 findNoNum a = [1]
 
 
-myFindIndex :: [String] -> [[String]] -> Int -> Int
-myFindIndex o (x:xs) i
-    | o == x = i
-    | otherwise = myFindIndex o xs (i+1)
+myFindIndex1 :: [String] -> [[String]] -> Int -> Int
+myFindIndex1 s (x:xs) i
+    | s==x = i
+    | otherwise = myFindIndex1 s xs (i+1)
 
 
 concatVars :: [[String]] -> [String]
@@ -83,11 +84,10 @@ simpIndep (x:xs)
     | otherwise = x : (simpIndep xs)
 
 
-normSumPoli :: Arv a -> Arv a -> Arv a
-normsumPoli Vazia Vazia = Vazia
-normsumPoli Vazia a = a
-normsumPoli a Vazia = a
-normSumPoli a b = Vazia
+
+
+
+
 
 
 -- normalizar a soma entre 2 termos
@@ -118,3 +118,6 @@ checkNoVarEqual (NoVar a) (NoVar b) = a == b
 -- verifica se 2 NoNum sao iguais
 checkNoNumEqual :: Arv a -> Arv a -> Bool
 checkNoNumEqual (NoNum a) (NoNum b) = a == b 
+ 
+
+

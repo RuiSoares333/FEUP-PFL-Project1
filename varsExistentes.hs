@@ -10,7 +10,7 @@ import Data.List
 -- x^2 + y^2 + 5*x^2
 
 varEx :: Arv a -> [[String]]
-varEx a =  remDup [sort x | x <- varExSoma a, x /= []]
+varEx a =  remDup [sort x | x <- varExSoma a]
 
 remDup :: [[String]] -> [[String]]
 remDup l = map head (group (sort l))

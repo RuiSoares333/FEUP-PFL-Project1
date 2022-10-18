@@ -1,6 +1,5 @@
--- TODO Funçoes comuns
-{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 module Utils where
+
 import Data.List
 
 -- acumula no indice correspondente a posicao da variavel
@@ -14,10 +13,12 @@ populateList :: Int -> [Int]
 populateList n = replicate n 0
 
 
-myFindIndex :: (Eq a) => a -> [a] -> Int -> Int
-myFindIndex s (x:xs) i
-    | s==x = i
-    | otherwise = myFindIndex s xs (i+1)
+myFindIndex :: (Eq a, Ord a) => a -> [a] -> Int -> Int
+myFindIndex s (x:xs) i =
+    if s == x then i
+    else myFindIndex s xs (i+1)
+
+
 
 remDup :: (Eq a, Ord a) => [a] -> [a]
 remDup l = map head (group (sort l))

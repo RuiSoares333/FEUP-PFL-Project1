@@ -1,8 +1,8 @@
 module VarsExistentes where
-
-import GrowTree
+import GrowTree ( Arv(NoProd, NoSoma, NoPoten, NoVar, NoNum) )
 import Data.List
 import Utils
+
 
 
 -- primeiro pegar em todas as variaveis que existem na arvore

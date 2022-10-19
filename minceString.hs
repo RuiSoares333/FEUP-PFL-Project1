@@ -8,18 +8,24 @@ module MinceString where
 -- 4. Partir os "^" - problema quando tem 0 pq nao tem "^", quando tem 1 porque nao existe o "1"
 
 
----- Chamada de todas as funções que transforma um input do tipo: "5*x^2" -> [[["5"],["x","2"]]]
-trataString :: String -> [[[String]]]
-trataString [] = [[[]]]
-trataString s = tiraVezes (tiraMais (simpMenos (removeEspaco s)))
+
+-- recebe um polinomio em string ex.: "5*x^2"
+-- retorna uma estrutura do seguinte tipo ex.: [[["5"],["x","2"]]]
+parseString :: String -> [[[String]]]
+parseString [] = [[[]]]
+parseString s = tiraVezes (tiraMais (simpMenos (removeEspaco s)))
 
 
----- Remoção de todas as instancias de espaços para efeitos de simplificação da String de Input
+-- remove todos os espacos para simplificar a string de input
+-- recebe a string do polinomio do input
+-- retorna a mesma string mas sem espacos
 removeEspaco :: String -> String
 removeEspaco s = [x | x <- s, x/=' ']
 
 
----- Adicionar o char '+' antes de todos os chars '-' porque a separação dos termos é feita a partir dos '+'
+-- adicionar o char '+' antes de todos os chars '-' porque a separacao dos termos e feita a partir dos '+'
+-- recebe a string do polinomio do input
+-- retorna a mesma string mas com caracteres de '+' antes dos caracteres de '-'
 simpMenos :: String -> String
 simpMenos [] = ""
 simpMenos (x:xs)
@@ -28,26 +34,34 @@ simpMenos (x:xs)
         | otherwise =  x : simpMenos xs
 
 
----- Separar os termos pelo char '+' que transforma um input do tipo: "x+5*y+7*z^2" -> ["x", "5*y", "7*z^2"]
+-- separa os termos pelo char '+' que transforma um input do tipo: "x+5*y+7*z^2" -> ["x", "5*y", "7*z^2"]
+-- recebe a string de input com o polinomio
+-- retorna uma lista de strings com os termos do polinomio
 tiraMais :: String -> [String]
-tiraMais s =  split '+' s
+tiraMais = split '+'
 
 
----- Separa os componentes de um termo que transforma um input do tipo: ["x", "5*y", "7*z^2"] -> [[["x"]],[["5"],["y"]],[["7"],["z^2"]]]
+-- separa os componentes de um termo que transforma um input do tipo: ["x", "5*y", "7*z^2"] -> [[["x"]],[["5"],["y"]],[["7"],["z","2"]]]
+-- recebe uma lista de strings com os termos do polinomio
+-- retorna uma estrutura com os termos
+---- dentro de cada termo tem [[coeficiente, [[variavel, potencia], ...] ], ...]
 tiraVezes :: [String] -> [[[String]]]
-tiraVezes [] = []
-tiraVezes (x:xs) =  [tiraPotencia (split '*' x)] ++ tiraVezes xs
+tiraVezes = map (tiraPoten . split '*')
 
 
----- Separa todos os elementos de uma string numa lista de strings, em que o caracter de separacao pode ser escolhido
+-- separa os compontentes de uma variavel elevada a uma dada potencia. O que corresponde a uma operacao do tipo ["z^2"] -> [["z","2"]]
+-- recebe uma lista de strings com os termos do polinomio
+-- retorna uma lista de cada elemento da lista separado pelo caracter '^'
+tiraPoten :: [String] -> [[String]]
+tiraPoten  [] = []
+tiraPoten (x:xs) = [split '^' x] ++ tiraPoten xs
+
+
+-- separa todos os elementos de uma string numa lista de strings, em que o caracter de separacao pode ser escolhido
+-- recebe um caracter e uma string
+-- retorna uma lista com strings provenientes da string original que foi separada pelo caracter
 split :: Char -> String -> [String]
 split _ "" = []
-split c s = firstWord : (split c rest)
+split c s = firstWord : split c rest
     where firstWord = takeWhile (/=c) s
           rest = drop (length firstWord + 1) s
-
-
----- Separa os compontentes de uma variavel elevada a uma dada potencia. O que corresponde a uma operacao do tipo ["z^2"] -> [["z","2"]]
-tiraPotencia :: [String] -> [[String]]
-tiraPotencia  [] = []
-tiraPotencia (x:xs) = [split '^' x] ++ tiraPotencia xs

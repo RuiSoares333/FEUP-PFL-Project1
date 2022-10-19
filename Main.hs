@@ -1,6 +1,7 @@
 module Main where
-import GrowTree ( separaPoli, Arv(NoProd, NoPoten, NoVar, NoNum, NoSoma) )
-import MinceString ( trataString )
+
+import GrowTree ( paraArv, Arv(..) )
+import MinceString ( parseString )
 import NormExp ( normPoli )
 
 main = do
@@ -15,7 +16,7 @@ main = do
 -- recebe 2 polinomios
 -- retorna a soma dos 2 polinomios
 sumPoly :: String -> String -> String
-sumPoly a b = normPoli (separaPoli (trataString (a ++ "+" ++ b)))
+sumPoly a b = normPoli (paraArv (parseString (a ++ "+" ++ b)))
 
 
 
@@ -30,8 +31,8 @@ multPoly _ "" = ""
 multPoly "" _ = "" 
 multPoly a b = normPoli (juntaNoSoma (juntaAllProd (getTermos arvA) (getTermos arvB)))
     where
-        arvA = separaPoli (trataString a)
-        arvB = separaPoli (trataString b)
+        arvA = paraArv (parseString a)
+        arvB = paraArv (parseString b)
 
 
 -- recebe uma arvore que representa um polinomio
@@ -70,7 +71,7 @@ juntaNoSoma l = NoSoma '+' (juntaNoSoma (take n l))  (juntaNoSoma (drop n l))
 -- recebe um polinomio e a variavel a partir do qual se vai fazer a derivada
 -- retorna o polinomio derivado
 derivPoly :: String -> String -> String
-derivPoly a s = normPoli (myDerivPoly (separaPoli (trataString a)) s)
+derivPoly a s = normPoli (myDerivPoly (paraArv (parseString a)) s)
 
 
 -- recebe uma arvore que representa o polinomio e a variavel a partir do qual se vai fazer a derivada

@@ -7,12 +7,8 @@ import VarsExistentes ( varEx )
 import Utils ( populateList )
 
 
-main = do
-    putStrLn "AAAAAAAAA"
-
-
-
-
+main =
+    print "batata"
 
 --------------------------------------------------------- NORMALIZAR ---------------------------------------------------------
 
@@ -85,7 +81,7 @@ juntaNoSoma l = NoSoma '+' (juntaNoSoma (take n l))  (juntaNoSoma (drop n l))
 -- recebe um polinomio e a variavel a partir do qual se vai fazer a derivada
 -- retorna o polinomio derivado
 derivPoly :: String -> String -> String
-derivPoly a s = myNormPoly (myDerivPoly (paraArv (parseString a)) s)
+derivPoly a s = normPoly (myNormPoly (myDerivPoly (paraArv (parseString a)) s))
 
 
 -- recebe uma arvore que representa o polinomio e a variavel a partir do qual se vai fazer a derivada
@@ -96,7 +92,7 @@ myDerivPoly (NoPoten x (NoVar v) (NoNum e)) s
     | otherwise = NoNum 0
 
 myDerivPoly (NoSoma x l r) s = NoSoma '+' (myDerivPoly l s) (myDerivPoly r s)
-myDerivPoly (NoProd x l r) s = myDerivPoly (NoProd x l r) s
+myDerivPoly (NoProd x l r) s = myDerivPolyAux (NoProd x l r) s
 myDerivPoly a _ = NoNum 0
 
 

@@ -1,4 +1,5 @@
 module GrowTree where
+import MinceString (split)
 
 -- estrutura escolhida: uma arvore binaria
 -- explicada no ficheiro README
@@ -36,10 +37,10 @@ paraArv lCoef
 ---- 7*x^2 = NoProd '*' (NoNum 7) (NoPoten '^' (NoVar "x") (NoNum 2)) 
 separaCoef :: [[String]] -> Arv a
 separaCoef [[]] = Vazia
-separaCoef coef
-        | s == 0 = separaFolha (head coef)
-        | otherwise = NoProd '*' (separaCoef (take s coef)) (separaCoef (drop s coef))
-        where s = length coef `div` 2
+separaCoef term
+        | s == 0 = separaFolha (head term)
+        | otherwise = NoProd '*' (separaCoef (take s term)) (separaCoef (drop s term))
+        where s = length term `div` 2
 
 
 -- decide se uma folha da arvore e um numero ou uma variavel
@@ -50,12 +51,19 @@ separaFolha [] = Vazia
 separaFolha e
         | v = NoProd '*' (NoNum (-1)) (separaFolha (tail (head e) : tail e))
         | s == 1 = numOuVar (head e)
-        | otherwise = NoPoten '^' (NoVar (head e)) (NoNum (read (head (tail e)) :: Int))
+        | otherwise = potenOuNum e
         where
                 s = length e
                 v = head (head e) == '-' && not(checkIfDigit(tail (head e)))
 
+potenOuNum :: [String] -> Arv a
+potenOuNum [a, b]
+        | checkIfDigit a = NoNum ((read a :: Int)^exp)
+        | otherwise = NoPoten '^' (NoVar a) (NoNum exp)
+        where 
+                exp = read b :: Int
 
+                
 -- recebe uma string
 ---- se for numero retorna um NoNum
 ---- senao retorna NoPoten

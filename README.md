@@ -3,7 +3,6 @@ First Project for the Course Programação Funcional e Lógica (PFL) at Faculdad
 
 
 
-- Uma breve descrição da estratégia de implementação de cada funcionalidade;
 
 - Exemplos de utilização que permitam testar todas as funcionalidades do programa
 
@@ -28,7 +27,7 @@ A seguinte imagem mostra um exemplo da utilização da árvore binária, para o 
     style="display: block; 
            margin-left: auto;
            margin-right: auto;
-           width: 70%;"
+           width: 90%;"
     src="./ArvBinaria.png" 
     alt="Arv Binaria">
 </img>
@@ -62,33 +61,48 @@ A maior **desvantagem** seria a normalização do polinómio, já que obrigou à
 ## Funcionalidades
 
 ### Normalizar um Polinómio - normPoly :: String -> String
-> Na função normPoly recebemos uma string que representa um polinómio. <br>
-> Primeiro transformamos a string numa árvore binária do tipo já apresentado.<br>
-> De seguida encontramos todas as variáveis existentes no polinómio e colocamo-las numa lista ordenada. <br>
-> Depois acumulamos numa lista (com o tamanho da anterior mas inicialmente preenchida com 0's) os coeficientes no índice correspondente às variáveis da lista anterior. <br>
-> Finalmente concatenamos o polinómio na forma de uma string. <br>
+> Na função normPoly recebemos uma string que representa um polinómio.
+>
+> Primeiro transformamos a string numa árvore binária do tipo já apresentado.
+>
+> De seguida encontramos todas as variáveis existentes no polinómio e colocamo-las numa lista ordenada.
+>
+> Depois acumulamos numa lista (com o tamanho da anterior mas inicialmente preenchida com 0's) os coeficientes no índice correspondente às variáveis da lista anterior.
+>
+> Finalmente concatenamos o polinómio na forma de uma string.
+>
 > Retornamos uma string com o polinómio normalizado.
 
 ### Soma de Polinómios - sumPoly :: String -> String -> String
-> Na função sumPoly recebemos 2 strings, cada uma representando um polinómio. <br>
-> Simplesmente concatenamos as strings com o carácter '+' e deixamos a normalização fazer o resto. <br>
+> Na função sumPoly recebemos 2 strings, cada uma representando um polinómio.
+>
+> Simplesmente concatenamos as strings com o carácter '+' e deixamos a normalização fazer o resto.
+>
 > Retornamos uma string com o resultado da soma normalizado.
 
 ### Produto de Polinómios - multPoly :: String -> String -> String
-> Na função multPoly recebemos 2 strings, cada uma representando um polinómio. <br>
-> Primeiro separamos os termos dos dois polinómios em 2 listas, uma lista para cada conjunto de termos. <br>
-> De seguida, juntamos cada termo da primeira lista com todos os termos da segunda lista através de um *NoProd*. <br>
-> Finalmente, juntamos a lista resultante com *NoSoma* e deixamos a normalização fazer o resto. <br>
+> Na função multPoly recebemos 2 strings, cada uma representando um polinómio.
+>
+> Primeiro separamos os termos dos dois polinómios em 2 listas, uma lista para cada conjunto de termos.
+>
+> De seguida, juntamos cada termo da primeira lista com todos os termos da segunda lista através de um *NoProd*.
+>
+> Finalmente, juntamos a lista resultante com *NoSoma* e deixamos a normalização fazer o resto.
+>
 > Retornamos uma string com o resultado do produto normalizado.
 
 
 ### Derivar um Polinómio - derivPoly :: String -> String -> String
-> Recebemos uma string que representa o polinómio e uma segunda string que representa a variável a ser derivada. <br>
-> Simplesmente atravessamos recursivamente todos os nós:
+>Recebemos uma string que representa o polinómio e uma segunda string que representa a variável a ser derivada. <br>
+>Simplesmente atravessamos recursivamente todos os nós:
 > - Se encontrar um *NoProd*:
 >    - se encontra um *NoPoten* com um *NoVar* que seja igual à variável a ser derivada, troca o *NoPoten* por um *NoProd* que multiplica o expoente por um *NoPoten* com a variável elevada ao (expoente-1);
 >    - senão ignora o *NoNum*, que é a única outra opção que pode aparecer;
 > - se encontrar um *NoNum* retorna zero;
 > - senão continua a travessia recursiva através dos *NoSoma*'s.
-> Finalmente normalizamos a árvore resultante. <br>
-> Retornamos uma string com o resultado da derivada normalizada.
+>
+>Finalmente normalizamos a árvore resultante.<br>
+>Retornamos uma string com o resultado da derivada normalizada.
+
+
+## Exemplos de Utilização

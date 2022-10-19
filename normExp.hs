@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 module NormExp where
 
 import GrowTree (Arv (..))
@@ -5,13 +6,9 @@ import Utils ( insertInIndex, populateList, myFindIndex )
 import VarsExistentes ( varEx, varExSoma )
 
 
-
-
--- recebe uma arvore
--- retorna a arvore normalizada e em string
-normPoli :: Arv a -> String
-normPoli Vazia = ""
-normPoli a = simpIndep (juntaSoma (concatCoefs coefs (concatVars vars)))
+myNormPoly :: Arv a -> String
+myNormPoly Vazia = ""
+myNormPoly a = simpIndep (juntaSoma (removePoten (concatCoefs coefs (concatVars vars))))
     where
         vars = varEx a
         coefs = somaTermos (listaArv a) vars (populateList (length vars))
@@ -41,11 +38,30 @@ findNoNum (NoNum a) = [a]
 findNoNum (NoProd x l r) = findNoNum l ++ findNoNum r
 findNoNum a = [1]
 
+potenSimp :: String -> String
+potenSimp s
+    | sub == "^1" = take (length s-2) s
+    | sub == "^0" = "1"
+    | otherwise = s
+    where sub = drop (length s-2) s
+
+removePoten :: [String] -> [String]
+removePoten = map potenSimp
+
+prodUm :: String -> Bool
+prodUm "1" = True
+prodUm a = False
+
+removeProdUm :: [String] -> [String]
+removeProdUm [] = []
+removeProdUm (x:xs)
+    | prodUm x = removeProdUm xs
+    | otherwise = x : removeProdUm xs
 
 -- recebe as variaveis e coeficientes de todos os termos
 -- retorna os termos normalizados
 concatVars :: [[String]] -> [String]
-concatVars = map concatVarsAux
+concatVars = map (concatVarsAux . removeProdUm . removePoten)
 
 
 -- recebe as variaveis e coeficentes
@@ -62,13 +78,14 @@ concatCoefs :: [Int] -> [String] -> [String]
 concatCoefs coef var = zipWith (++) finalCoef var
     where
         n = length coef
-        c = [show x | x<-coef]
+        c = [show x | x<- coef]
         finalCoef = zipWith (++) c (replicate n "*")
 
 
 -- recebe a lista com os termos
 -- retorna a string com os termos concatenados com '+'
 juntaSoma :: [String] -> String
+juntaSoma [] = []
 juntaSoma [a] = a
 juntaSoma (x:xs) = x ++ " + " ++ juntaSoma xs
 

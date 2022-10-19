@@ -2,10 +2,24 @@ module Main where
 
 import GrowTree ( paraArv, Arv(..) )
 import MinceString ( parseString )
-import NormExp ( normPoli )
+import NormExp( concatCoefs, concatVars, juntaSoma, listaArv, simpIndep, somaTermos, myNormPoly )
+import VarsExistentes ( varEx )
+import Utils ( populateList )
+
 
 main = do
     putStrLn "AAAAAAAAA"
+
+
+
+
+
+--------------------------------------------------------- NORMALIZAR ---------------------------------------------------------
+
+-- recebe um polinomio
+-- retorna o polinomio normalizado
+normPoly :: String -> String
+normPoly a = myNormPoly (paraArv (parseString a))
 
 
 
@@ -16,7 +30,7 @@ main = do
 -- recebe 2 polinomios
 -- retorna a soma dos 2 polinomios
 sumPoly :: String -> String -> String
-sumPoly a b = normPoli (paraArv (parseString (a ++ "+" ++ b)))
+sumPoly a b = normPoly (a ++ "+" ++ b)
 
 
 
@@ -29,7 +43,7 @@ sumPoly a b = normPoli (paraArv (parseString (a ++ "+" ++ b)))
 multPoly :: String -> String -> String
 multPoly _ "" = ""
 multPoly "" _ = "" 
-multPoly a b = normPoli (juntaNoSoma (juntaAllProd (getTermos arvA) (getTermos arvB)))
+multPoly a b = myNormPoly (juntaNoSoma (juntaAllProd (getTermos arvA) (getTermos arvB)))
     where
         arvA = paraArv (parseString a)
         arvB = paraArv (parseString b)
@@ -71,7 +85,7 @@ juntaNoSoma l = NoSoma '+' (juntaNoSoma (take n l))  (juntaNoSoma (drop n l))
 -- recebe um polinomio e a variavel a partir do qual se vai fazer a derivada
 -- retorna o polinomio derivado
 derivPoly :: String -> String -> String
-derivPoly a s = normPoli (myDerivPoly (paraArv (parseString a)) s)
+derivPoly a s = myNormPoly (myDerivPoly (paraArv (parseString a)) s)
 
 
 -- recebe uma arvore que representa o polinomio e a variavel a partir do qual se vai fazer a derivada
@@ -82,6 +96,14 @@ myDerivPoly (NoPoten x (NoVar v) (NoNum e)) s
     | otherwise = NoNum 0
 
 myDerivPoly (NoSoma x l r) s = NoSoma '+' (myDerivPoly l s) (myDerivPoly r s)
-myDerivPoly (NoProd x l r) s = NoProd '*' (myDerivPoly l s) (myDerivPoly r s)
-myDerivPoly a _ = a
+myDerivPoly (NoProd x l r) s = myDerivPoly (NoProd x l r) s
+myDerivPoly a _ = NoNum 0
 
+
+myDerivPolyAux :: Arv a -> String -> Arv a
+myDerivPolyAux (NoPoten x (NoVar v) (NoNum e)) s
+    | v == s = NoProd '*' (NoNum e) (NoPoten '^' (NoVar v) (NoNum (e-1)))
+    | otherwise = NoNum 0
+
+myDerivPolyAux (NoProd x l r) s = NoProd '*' (myDerivPolyAux l s) (myDerivPolyAux r s)
+myDerivPolyAux a _ = a

@@ -38,7 +38,7 @@ sumPoly a b = normPoly (a ++ "+" ++ b)
 -- retorna o produto dos dois
 multPoly :: String -> String -> String
 multPoly _ "" = ""
-multPoly "" _ = "" 
+multPoly "" _ = ""
 multPoly a b = myNormPoly (juntaNoSoma (juntaAllProd (getTermos arvA) (getTermos arvB)))
     where
         arvA = paraArv (parseString a)
@@ -68,8 +68,8 @@ juntaUmProd a la n = zipWith (NoProd '*') (take n (repeat a)) la
 -- recebe uma lista arvores que representa os termos do polinomio
 -- retorna uma arvore com os termos ligados por NoSoma's
 juntaNoSoma :: [Arv] -> Arv
-juntaNoSoma [a] = a 
-juntaNoSoma l = NoSoma '+' (juntaNoSoma (take n l))  (juntaNoSoma (drop n l)) 
+juntaNoSoma [a] = a
+juntaNoSoma l = NoSoma '+' (juntaNoSoma (take n l))  (juntaNoSoma (drop n l))
     where n = length l `div` 2
 
 
@@ -84,24 +84,56 @@ derivPoly :: String -> String -> String
 derivPoly a s = myNormPoly (myDerivPoly (paraArv (parseString a)) s)
 
 
--- recebe uma arvore que representa o polinomio e a variavel a partir do qual se vai fazer a derivada
+-- recebe uma arvore que representa um polinomio e uma string que representa a variavel a partir do qual se vai fazer a derivada
 -- retorna o polinomio derivado
 myDerivPoly :: Arv -> String -> Arv
-myDerivPoly (NoPoten x (NoVar v) (NoNum e)) s
-    | v == s = NoProd '*' (NoNum e) (NoPoten '^' (NoVar v) (NoNum (e-1)))
-    | otherwise = NoNum 0
+myDerivPoly a s = juntaNoSoma (myDerivPolyAux deriv la s)
+    where
+        la = prepForDeriv a
+        deriv = temVariavel la s
 
-myDerivPoly (NoSoma x l r) s = NoSoma '+' (myDerivPoly l s) (myDerivPoly r s)
-myDerivPoly (NoProd x l r) s = myDerivPolyAux (NoProd x l r) s
-myDerivPoly a _ = NoNum 0
+
+-- recebe uma arvore que representa o polinomio
+-- retorna todos os termos do polinomio numa lista de arvores
+prepForDeriv :: Arv -> [Arv]
+prepForDeriv (NoSoma x l r) = prepForDeriv l ++ prepForDeriv r
+prepForDeriv a = [a]
+
+
+-- recebe uma lista de bools e outra de termos e a variavel a ser derivada
+---- se o indice i da lista de bools for true, e feita a derivada do termo no indice i
+---- senao apenas adiciona 0, porque significa que nao existe aquela variavel naquele termo
+-- retorna uma lista de termos derivados
+myDerivPolyAux :: [Bool] -> [Arv] -> String -> [Arv]
+myDerivPolyAux [] [] _ = []
+myDerivPolyAux (False:xs) (y:ys) s = NoNum 0 : myDerivPolyAux xs ys s
+myDerivPolyAux (True:xs) (y:ys) s = getArvDeriv y s : myDerivPolyAux xs ys s
+
 
 
 -- recebe uma arvore que representa um termo e a variavel a partir do qual se vai fazer a derivada
 -- retorna o termo derivado
-myDerivPolyAux :: Arv -> String -> Arv
-myDerivPolyAux (NoPoten x (NoVar v) (NoNum e)) s
+getArvDeriv :: Arv -> String -> Arv
+getArvDeriv (NoPoten x (NoVar v) (NoNum e)) s
     | v == s = NoProd '*' (NoNum e) (NoPoten '^' (NoVar v) (NoNum (e-1)))
     | otherwise = NoPoten x (NoVar v) (NoNum e)
 
-myDerivPolyAux (NoProd x l r) s = NoProd '*' (myDerivPolyAux l s) (myDerivPolyAux r s)
-myDerivPolyAux a _ = a
+getArvDeriv (NoProd x l r) s = NoProd '*' (getArvDeriv l s) (getArvDeriv r s)
+getArvDeriv a _ = a
+
+
+-- recebe uma lista de termos e a variavel a ser derivada
+-- retorna uma lista de bools com True se o termo contiver a variavel, e False se nao tiver
+temVariavel :: [Arv] -> String -> [Bool]
+temVariavel [] s = []
+temVariavel (x:xs) s = [temVariavelAux x s] ++ temVariavel xs s
+
+
+-- funcao auxiliar que percorre o termo a procura da variavel a ser derivada
+temVariavelAux :: Arv -> String -> Bool
+temVariavelAux (NoPoten x (NoVar v) (NoNum e)) s
+    | v == s = True
+    | otherwise = False
+
+temVariavelAux (NoProd x l r) s = temVariavelAux l s || temVariavelAux r s
+temVariavelAux a _ = False

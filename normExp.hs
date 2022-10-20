@@ -5,6 +5,8 @@ import Utils ( insertInIndex, populateList, myFindIndex )
 import VarsExistentes ( varEx, varExSoma )
 
 
+-- recebe uma arvore que representa um polinomio
+-- retorna uma string que representa o polinomio normalizado
 myNormPoly :: Arv a -> String
 myNormPoly Vazia = "0"
 myNormPoly a
@@ -40,6 +42,9 @@ findNoNum (NoNum a) = [a]
 findNoNum (NoProd x l r) = findNoNum l ++ findNoNum r
 findNoNum a = [1]
 
+
+-- funcao auxiliar que remove potencias de 1 porque sao redundantes
+-- e troca potencias de 0 por 1
 potenSimp :: String -> String
 potenSimp s
     | sub == "^1" = take (length s-2) s
@@ -54,11 +59,13 @@ prodUm :: String -> Bool
 prodUm "1" = True
 prodUm a = False
 
+-- funcao auxiliar que recebe um
 removeProdUm :: [String] -> [String]
 removeProdUm [] = []
 removeProdUm (x:xs)
-    | prodUm x = removeProdUm xs
+    | x == "1" = removeProdUm xs
     | otherwise = x : removeProdUm xs
+
 
 -- recebe as variaveis e coeficientes de todos os termos
 -- retorna os termos normalizados
@@ -75,7 +82,7 @@ concatVarsAux (x:xs) = x ++ "*" ++ concatVarsAux xs
 
 
 -- recebe a lista dos coeficientes e das variaveis
--- retorna a lista com o produto dos coeficientes com as respetivas variaveis
+-- retorna a lista com o produto dos coeficientes com as respetivas variaveis e simplificado
 concatCoefs :: [Int] -> [String] -> [String]
 concatCoefs coef var = concatCoefsAux2 finalCoef var
     where
@@ -83,6 +90,9 @@ concatCoefs coef var = concatCoefsAux2 finalCoef var
         c = [show x | x<- coef]
         finalCoef = concatCoefsAux1 c var
 
+
+-- recebe a lista dos coeficientes e das variaveis
+-- retorna os coeficientes simplificados
 concatCoefsAux1 :: [String] -> [String] -> [String]
 concatCoefsAux1 [] [] = []
 concatCoefsAux1 [_] [] = [""]
@@ -92,6 +102,9 @@ concatCoefsAux1 (x:xs) (y:ys)
     | x == "-1" = "-" : concatCoefsAux1 xs ys
     | otherwise = (x ++ "*") : concatCoefsAux1 xs ys
 
+
+-- recebe a lista dos coeficientes e das variaveis
+-- retorna a lista dos termos simplificada
 concatCoefsAux2 :: [String] -> [String] -> [String]
 concatCoefsAux2 [] [] = []
 concatCoefsAux2 (x:xs) (y:ys)
@@ -106,7 +119,7 @@ juntaSoma :: [String] -> String
 juntaSoma [] = ""
 juntaSoma [a] = a
 juntaSoma (x:xs)
-    | x == "" = juntaSoma xs
+    | x == ""  || x=="0" = juntaSoma xs
     | drop (length x-1) x == "*" = x ++ juntaSoma xs
     | (head xs /= "") && head (head xs) == '-' = x ++ " - " ++ juntaSoma (tail (head xs) : tail xs)
     | x == "-" = x ++ juntaSoma xs

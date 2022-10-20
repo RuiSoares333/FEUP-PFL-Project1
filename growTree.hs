@@ -11,7 +11,6 @@ data Arv a = Vazia
             | NoNum Int deriving Show      -- coeficiente
 
 
-
 -- Construir a arvore : Feito
 -- 1. Separar o polinomio pela metade   :  [[["5"],["x","2"]],[["-10"],["y","3"],["x","2"]]] -> [["5"],["x","2"]]  &  [["-10"],["y","3"],["x","2"]]
         -- 1.5 separa-los na arvore com '+'
@@ -25,7 +24,8 @@ data Arv a = Vazia
 
 -- transforma um input do tipo [[["7"],["x","2"]]] -em-> NoProd '*' (NoNum 7) (NoPoten '^' (NoVar "x") (NoNum 2))
 paraArv :: [[[String]]] -> Arv a
-paraArv [[[]]] = Vazia
+paraArv [[[]]] = NoNum 0
+paraArv [[]] = NoNum 0
 paraArv lCoef
         | (head lCoef) == [] = paraArv (tail lCoef)
         | s == 0 = separaCoef (head lCoef)
@@ -56,6 +56,10 @@ separaFolha e
                 s = length e
                 v = head (head e) == '-' && not(checkIfDigit(tail (head e)))
 
+
+-- funcao auxiliar que retorna a potencia de um input
+---- se o input for um numero, retorna o NoNum elevado aquela potencia
+---- senao retorna um NoPoten com o seu respetivo NoPoten e NoNum como potencia
 potenOuNum :: [String] -> Arv a
 potenOuNum [a, b]
         | checkIfDigit a = NoNum ((read a :: Int)^exp)

@@ -2,7 +2,7 @@ module Main where
 
 import GrowTree ( paraArv, Arv(..) )
 import MinceString ( parseString )
-import NormExp( concatCoefs, concatVars, juntaSoma, listaArv, simpIndep, somaTermos, myNormPoly )
+import NormExp( concatCoefs, concatVars, juntaSoma, listaArv, simpIndep, somaTermos, myNormPoly)
 import VarsExistentes ( varEx )
 import Utils ( populateList )
 
@@ -81,7 +81,7 @@ juntaNoSoma l = NoSoma '+' (juntaNoSoma (take n l))  (juntaNoSoma (drop n l))
 -- recebe um polinomio e a variavel a partir do qual se vai fazer a derivada
 -- retorna o polinomio derivado
 derivPoly :: String -> String -> String
-derivPoly a s = normPoly (myNormPoly (myDerivPoly (paraArv (parseString a)) s))
+derivPoly a s = myNormPoly (myDerivPoly (paraArv (parseString a)) s)
 
 
 -- recebe uma arvore que representa o polinomio e a variavel a partir do qual se vai fazer a derivada
@@ -96,6 +96,8 @@ myDerivPoly (NoProd x l r) s = myDerivPolyAux (NoProd x l r) s
 myDerivPoly a _ = NoNum 0
 
 
+-- recebe uma arvore que representa um termo e a variavel a partir do qual se vai fazer a derivada
+-- retorna o termo derivado
 myDerivPolyAux :: Arv a -> String -> Arv a
 myDerivPolyAux (NoPoten x (NoVar v) (NoNum e)) s
     | v == s = NoProd '*' (NoNum e) (NoPoten '^' (NoVar v) (NoNum (e-1)))

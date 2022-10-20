@@ -6,12 +6,6 @@ import Utils ( insertInIndex, populateList, myFindIndex, remDup )
 
 
 
--- primeiro pegar em todas as variaveis que existem na arvore
--- depois juntar em elementos diferentes tipo [[x^2, 5*x^2, 7*x^2], [y^2, 10*y^2]]
--- depois fazer a simplificação da soma [[13*x^2], [11*y^2]]
--- x^2 + y^2 + 5*x^2
-
-
 -- recebe uma arvore (polinomio)
 -- retorna as variaveis existentes em cada termo do polinomio
 varEx :: Arv a -> [[String]]

@@ -3,10 +3,10 @@ import MinceString (split)
 
 -- estrutura escolhida: uma arvore binaria
 -- explicada no ficheiro README
-data Arv a = Vazia
-            | NoSoma Char (Arv a) (Arv a) -- soma entre dois termos
-            | NoProd Char (Arv a) (Arv a) -- produto entre cada elemento de um termo
-            | NoPoten Char (Arv a) (Arv a) --  potencia de uma variavel
+data Arv = Vazia
+            | NoSoma Char Arv Arv -- soma entre dois termos
+            | NoProd Char Arv Arv -- produto entre cada elemento de um termo
+            | NoPoten Char Arv Arv --  potencia de uma variavel
             | NoVar String                 -- variavel em string
             | NoNum Int deriving Show      -- coeficiente
 
@@ -23,7 +23,7 @@ data Arv a = Vazia
 
 
 -- transforma um input do tipo [[["7"],["x","2"]]] -em-> NoProd '*' (NoNum 7) (NoPoten '^' (NoVar "x") (NoNum 2))
-paraArv :: [[[String]]] -> Arv a
+paraArv :: [[[String]]] -> Arv
 paraArv [[[]]] = NoNum 0
 paraArv [[]] = NoNum 0
 paraArv lCoef
@@ -35,8 +35,8 @@ paraArv lCoef
 
 -- separa as variaveis dentro de um termo com NoProd's
 ---- 7*x^2 = NoProd '*' (NoNum 7) (NoPoten '^' (NoVar "x") (NoNum 2)) 
-separaCoef :: [[String]] -> Arv a
-separaCoef [[]] = Vazia
+separaCoef :: [[String]] -> Arv
+separaCoef [[]] = NoNum 0
 separaCoef term
         | s == 0 = separaFolha (head term)
         | otherwise = NoProd '*' (separaCoef (take s term)) (separaCoef (drop s term))
@@ -46,8 +46,8 @@ separaCoef term
 -- decide se uma folha da arvore e um numero ou uma variavel
 ---- se for numero cria um NoNum
 ---- senao cria NoPoten
-separaFolha :: [String] -> Arv a
-separaFolha [] = Vazia
+separaFolha :: [String] -> Arv
+separaFolha [] = NoNum 0
 separaFolha e
         | v = NoProd '*' (NoNum (-1)) (separaFolha (tail (head e) : tail e))
         | s == 1 = numOuVar (head e)
@@ -60,7 +60,7 @@ separaFolha e
 -- funcao auxiliar que retorna a potencia de um input
 ---- se o input for um numero, retorna o NoNum elevado aquela potencia
 ---- senao retorna um NoPoten com o seu respetivo NoPoten e NoNum como potencia
-potenOuNum :: [String] -> Arv a
+potenOuNum :: [String] -> Arv
 potenOuNum [a, b]
         | checkIfDigit a = NoNum ((read a :: Int)^exp)
         | otherwise = NoPoten '^' (NoVar a) (NoNum exp)
@@ -71,7 +71,7 @@ potenOuNum [a, b]
 -- recebe uma string
 ---- se for numero retorna um NoNum
 ---- senao retorna NoPoten
-numOuVar :: String -> Arv a
+numOuVar :: String -> Arv
 numOuVar e
         | v = NoNum (read e :: Int)
         | otherwise = NoPoten '^'  (NoVar e) (NoNum 1)

@@ -7,7 +7,7 @@ import VarsExistentes ( varEx, varExSoma )
 
 -- recebe uma arvore que representa um polinomio
 -- retorna uma string que representa o polinomio normalizado
-myNormPoly :: Arv a -> String
+myNormPoly :: Arv -> String
 myNormPoly Vazia = "0"
 myNormPoly a
     | res == "" = "0"
@@ -20,7 +20,7 @@ myNormPoly a
 
 -- recebe os termos, as variaveis existentes, e uma lista que acumula o coeficiente de cada variavel
 -- retorna a soma simplificada de cada tipo de termo : x + 3*x + x = 5*x
-somaTermos :: [Arv a] -> [[String]] -> [Int] -> [Int]
+somaTermos :: [Arv] -> [[String]] -> [Int] -> [Int]
 somaTermos [] p l = l
 somaTermos (x:xs) p l = somaTermos xs p (insertInIndex id l coef)
     where
@@ -30,14 +30,14 @@ somaTermos (x:xs) p l = somaTermos xs p (insertInIndex id l coef)
 
 -- recebe uma arvore (polinomio)
 -- retorna todos os termos do polinomio
-listaArv :: Arv a -> [Arv a]
+listaArv :: Arv -> [Arv]
 listaArv (NoSoma x l r) = listaArv l ++ listaArv r
 listaArv a = [a]
 
 
 -- recebe uma arvore (termo)
 -- retorna o coeficiente desse termo
-findNoNum :: Arv a-> [Int]
+findNoNum :: Arv -> [Int]
 findNoNum (NoNum a) = [a]
 findNoNum (NoProd x l r) = findNoNum l ++ findNoNum r
 findNoNum a = [1]

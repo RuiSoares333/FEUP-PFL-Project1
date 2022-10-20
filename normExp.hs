@@ -1,4 +1,3 @@
-{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 module NormExp where
 
 import GrowTree (Arv (..))

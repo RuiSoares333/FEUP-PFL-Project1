@@ -99,7 +99,7 @@ myDerivPoly a _ = NoNum 0
 myDerivPolyAux :: Arv a -> String -> Arv a
 myDerivPolyAux (NoPoten x (NoVar v) (NoNum e)) s
     | v == s = NoProd '*' (NoNum e) (NoPoten '^' (NoVar v) (NoNum (e-1)))
-    | otherwise = NoNum 0
+    | otherwise = NoPoten x (NoVar v) (NoNum e)
 
 myDerivPolyAux (NoProd x l r) s = NoProd '*' (myDerivPolyAux l s) (myDerivPolyAux r s)
 myDerivPolyAux a _ = a

@@ -1,139 +1,147 @@
 module Main where
 
-import GrowTree ( paraArv, Arv(..) )
-import MinceString ( parseString )
-import NormExp( concatCoefs, concatVars, juntaSoma, listaArv, simpIndep, somaTermos, myNormPoly)
-import VarsExistentes ( varEx )
-import Utils ( populateList )
+import Functions
 
+main :: IO ()
+main = 
+    do{
+        putStr "Escolha a operação que quer realizar:\n\n";
+        putStr "1 - Utilizar as operações em polinómios\n";
+        putStr "2 - Ver casos de utilização das operações em polinómios\n\n";
+        putStr "0 - Sair\n\n";
 
-main =
-    print "batata"
-
---------------------------------------------------------- NORMALIZAR ---------------------------------------------------------
-
--- recebe um polinomio
--- retorna o polinomio normalizado
-normPoly :: String -> String
-normPoly a = myNormPoly (paraArv (parseString a))
-
-
-
-
-
---------------------------------------------------------- SOMA ---------------------------------------------------------
-
--- recebe 2 polinomios
--- retorna a soma dos 2 polinomios
-sumPoly :: String -> String -> String
-sumPoly a b = normPoly (a ++ "+" ++ b)
+        a <- getLine;
+        if a == "1" then operacoes;
+        else if a == "2" then testes;
+        else if a == "0" then return ();
+        else main;
+}
 
 
 
+--------------------------------------------------------- OPERAÇÕES ---------------------------------------------------------
 
+operacoes :: IO ()
+operacoes = 
+    do {
+        putStr "Escolha a operação que quer realizar:\n\n";
+        putStr "1 - Normalização\n";
+        putStr "2 - Soma\n";
+        putStr "3 - Produto\n";
+        putStr "4 - Derivada\n\n";
+        putStr "0 - Voltar\n";
 
---------------------------------------------------------- PRODUTO ---------------------------------------------------------
+        a <- getLine;
+        if a == "1" then operacaoNorm;
+        else if a == "2" then operacaoSoma;
+        else if a == "3" then operacaoProd;
+        else if a == "4" then operacaoDeriv;
+        else if a == "0" then main;
+        else operacoes;
+}
 
--- recebe 2 polinomios 
--- retorna o produto dos dois
-multPoly :: String -> String -> String
-multPoly _ "" = ""
-multPoly "" _ = ""
-multPoly a b = myNormPoly (juntaNoSoma (juntaAllProd (getTermos arvA) (getTermos arvB)))
-    where
-        arvA = paraArv (parseString a)
-        arvB = paraArv (parseString b)
+operacaoNorm :: IO ()
+operacaoNorm =
+    do{
+        putStr "Introduza o polinómio\n";
+        a <- getLine;
+        putStr "Resultado: " >> putStr (normPoly a) >> putStr "\n\n";
+        operacoes
+    }
 
+operacaoSoma :: IO ()
+operacaoSoma =
+    do{
+        putStr "Introduza o primeiro polinómio\n";
+        a <- getLine;
+        putStr "Introduza o segundo polinómio\n";
+        b <- getLine;
+        putStr "Resultado: " >> putStr (sumPoly a b)  >> putStr "\n\n";
+        operacoes
+    }
 
--- recebe uma arvore que representa um polinomio
--- retorna todos os termos do polinomio
-getTermos :: Arv -> [Arv]
-getTermos (NoSoma x l r) = getTermos l ++ getTermos r
-getTermos a = [a]
+operacaoProd :: IO ()
+operacaoProd =
+    do{
+        putStr "Introduza o primeiro polinómio\n";
+        a <- getLine;
+        putStr "Introduza o segundo polinómio\n";
+        b <- getLine;
+        putStr "Resultado: " >> putStr (multPoly a b)  >> putStr "\n\n";
+        operacoes
+    }
 
-
--- recebe 2 listas de arvores que representam os termos dos dois polinomios
--- retorna a lista de todos os termos da primeira arvore multiplicados por todos os termos da segunda arvore
-juntaAllProd :: [Arv] -> [Arv] -> [Arv]
-juntaAllProd [] b = []
-juntaAllProd (x:xs) b = juntaUmProd x b (length b) ++ juntaAllProd xs b
-
-
--- recebe uma arvore que representa um termo e uma lista de arvores que representa todos os termos de um polinomio
--- retorna o a lista com o produto do termo com todos os termos do outro polinomio
-juntaUmProd :: Arv -> [Arv] -> Int -> [Arv]
-juntaUmProd a la n = zipWith (NoProd '*') (take n (repeat a)) la
-
-
--- recebe uma lista arvores que representa os termos do polinomio
--- retorna uma arvore com os termos ligados por NoSoma's
-juntaNoSoma :: [Arv] -> Arv
-juntaNoSoma [a] = a
-juntaNoSoma l = NoSoma '+' (juntaNoSoma (take n l))  (juntaNoSoma (drop n l))
-    where n = length l `div` 2
-
-
-
-
-
---------------------------------------------------------- DERIVADA ---------------------------------------------------------
-
--- recebe um polinomio e a variavel a partir do qual se vai fazer a derivada
--- retorna o polinomio derivado
-derivPoly :: String -> String -> String
-derivPoly a s = myNormPoly (myDerivPoly (paraArv (parseString a)) s)
-
-
--- recebe uma arvore que representa um polinomio e uma string que representa a variavel a partir do qual se vai fazer a derivada
--- retorna o polinomio derivado
-myDerivPoly :: Arv -> String -> Arv
-myDerivPoly a s = juntaNoSoma (myDerivPolyAux deriv la s)
-    where
-        la = prepForDeriv a
-        deriv = temVariavel la s
-
-
--- recebe uma arvore que representa o polinomio
--- retorna todos os termos do polinomio numa lista de arvores
-prepForDeriv :: Arv -> [Arv]
-prepForDeriv (NoSoma x l r) = prepForDeriv l ++ prepForDeriv r
-prepForDeriv a = [a]
-
-
--- recebe uma lista de bools e outra de termos e a variavel a ser derivada
----- se o indice i da lista de bools for true, e feita a derivada do termo no indice i
----- senao apenas adiciona 0, porque significa que nao existe aquela variavel naquele termo
--- retorna uma lista de termos derivados
-myDerivPolyAux :: [Bool] -> [Arv] -> String -> [Arv]
-myDerivPolyAux [] [] _ = []
-myDerivPolyAux (False:xs) (y:ys) s = NoNum 0 : myDerivPolyAux xs ys s
-myDerivPolyAux (True:xs) (y:ys) s = getArvDeriv y s : myDerivPolyAux xs ys s
+operacaoDeriv :: IO ()
+operacaoDeriv =
+    do{
+        putStr "Introduza o polinómio\n";
+        a <- getLine;
+        putStr "Introduza a variável à qual o polinómio vai ser derivada\n";
+        b <- getLine;
+        putStr "Resultado: " >> putStr (derivPoly a b) >> putStr "\n\n";
+        operacoes
+    }
 
 
 
--- recebe uma arvore que representa um termo e a variavel a partir do qual se vai fazer a derivada
--- retorna o termo derivado
-getArvDeriv :: Arv -> String -> Arv
-getArvDeriv (NoPoten x (NoVar v) (NoNum e)) s
-    | v == s = NoProd '*' (NoNum e) (NoPoten '^' (NoVar v) (NoNum (e-1)))
-    | otherwise = NoPoten x (NoVar v) (NoNum e)
 
-getArvDeriv (NoProd x l r) s = NoProd '*' (getArvDeriv l s) (getArvDeriv r s)
-getArvDeriv a _ = a
+--------------------------------------------------------- TESTES ---------------------------------------------------------
 
-
--- recebe uma lista de termos e a variavel a ser derivada
--- retorna uma lista de bools com True se o termo contiver a variavel, e False se nao tiver
-temVariavel :: [Arv] -> String -> [Bool]
-temVariavel [] s = []
-temVariavel (x:xs) s = [temVariavelAux x s] ++ temVariavel xs s
+testes :: IO ()
+testes = do {
+        putStr "Escolha os exemplos que quer visualizar:\n\n";
+        putStr "1 - Normalização\n";
+        putStr "2 - Soma\n";
+        putStr "3 - Produto\n";
+        putStr "4 - Derivada\n\n";
+        putStr "0 - Voltar\n";
 
 
--- funcao auxiliar que percorre o termo a procura da variavel a ser derivada
-temVariavelAux :: Arv -> String -> Bool
-temVariavelAux (NoPoten x (NoVar v) (NoNum e)) s
-    | v == s = True
-    | otherwise = False
+        a <- getLine;
+        if a == "1" then testesNorm;
+        else if a == "2" then testesSoma;
+        else if a == "3" then testesProd;
+        else if a == "4" then testesDeriv;
+        else if a == "0" then main;
+        else operacoes;
+}
 
-temVariavelAux (NoProd x l r) s = temVariavelAux l s || temVariavelAux r s
-temVariavelAux a _ = False
+testesNorm :: IO ()
+testesNorm = do{
+    putStr "Teste com apenas números\n";
+    putStr "Teste com números e variáveis simples\n";
+    putStr "Teste com numeros e variaveis intercalados tipo 2*x*4*y^2*5*z^3*2\n";
+    putStr "Teste com apenas variaveis\n";
+    putStr "Teste com apenas variaveis com potencias elevadas\n";
+    testes
+}
+
+testesSoma :: IO ()
+testesSoma = do{
+    putStr "Teste com apenas números\n";
+    putStr "Teste com números e variáveis simples\n";
+    putStr "Teste com numeros e variaveis intercalados tipo 2*x*4*y^2*5*z^3*2\n";
+    putStr "Teste com apenas variaveis\n";
+    putStr "Teste com apenas variaveis com potencias elevadas\n";
+    testes
+}
+
+testesProd :: IO ()
+testesProd = do{
+    putStr "Teste com apenas números\n";
+    putStr "Teste com números e variáveis simples\n";
+    putStr "Teste com numeros e variaveis intercalados tipo 2*x*4*y^2*5*z^3*2\n";
+    putStr "Teste com apenas variaveis\n";
+    putStr "Teste com apenas variaveis com potencias elevadas\n";  
+    testes  
+}
+
+testesDeriv :: IO ()
+testesDeriv = do{
+    putStr "Teste com apenas números\n";
+    putStr "Teste com números e variáveis simples\n";
+    putStr "Teste com numeros e variaveis intercalados tipo 2*x*4*y^2*5*z^3*2\n";
+    putStr "Teste com apenas variaveis\n";
+    putStr "Teste com apenas variaveis com potencias elevadas\n";    
+    testes
+}

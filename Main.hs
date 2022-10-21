@@ -43,42 +43,42 @@ operacoes =
 operacaoNorm :: IO ()
 operacaoNorm =
     do{
-        putStr "Introduza o polinómio\n";
+        putStr "Normalização -> Introduza o polinómio\n";
         a <- getLine;
-        putStr "Resultado: " >> putStr (normPoly a) >> putStr "\n\n";
+        putStr "Normalização -> Resultado: " >> putStr (normPoly a) >> putStr "\n\n";
         operacoes
     }
 
 operacaoSoma :: IO ()
 operacaoSoma =
     do{
-        putStr "Introduza o primeiro polinómio\n";
+        putStr "Soma -> Introduza o primeiro polinómio\n";
         a <- getLine;
-        putStr "Introduza o segundo polinómio\n";
+        putStr "Soma -> Introduza o segundo polinómio\n";
         b <- getLine;
-        putStr "Resultado: " >> putStr (sumPoly a b)  >> putStr "\n\n";
+        putStr "Soma -> Resultado: " >> putStr (sumPoly a b)  >> putStr "\n\n";
         operacoes
     }
 
 operacaoProd :: IO ()
 operacaoProd =
     do{
-        putStr "Introduza o primeiro polinómio\n";
+        putStr "Produto -> Introduza o primeiro polinómio\n";
         a <- getLine;
-        putStr "Introduza o segundo polinómio\n";
+        putStr "Produto -> Introduza o segundo polinómio\n";
         b <- getLine;
-        putStr "Resultado: " >> putStr (multPoly a b)  >> putStr "\n\n";
+        putStr "Produto -> Resultado: " >> putStr (multPoly a b)  >> putStr "\n\n";
         operacoes
     }
 
 operacaoDeriv :: IO ()
 operacaoDeriv =
     do{
-        putStr "Introduza o polinómio\n";
+        putStr "Derivação -> Introduza o polinómio\n";
         a <- getLine;
-        putStr "Introduza a variável à qual o polinómio vai ser derivada\n";
+        putStr "Derivação -> Introduza a variável à qual o polinómio vai ser derivada\n";
         b <- getLine;
-        putStr "Resultado: " >> putStr (derivPoly a b) >> putStr "\n\n";
+        putStr "Derivação -> Resultado: " >> putStr (derivPoly a b) >> putStr "\n\n";
         operacoes
     }
 

@@ -108,11 +108,11 @@ testes = do {
 
 testesNorm :: IO ()
 testesNorm = do{
-    putStr "Teste com apenas números\n";
-    putStr "Teste com números e variáveis simples\n";
-    putStr "Teste com numeros e variaveis intercalados tipo 2*x*4*y^2*5*z^3*2\n";
-    putStr "Teste com apenas variaveis\n";
-    putStr "Teste com apenas variaveis com potencias elevadas\n";
+    putStr "1*50*100 + 100 + 2\n";
+    putStr "2*x^2 + 5*x + 2*x\n";
+    putStr "2*x*4*y^5*2*4*x^6*z^2*2\n";
+    putStr "x^2*x^3*y + y*y\n";
+    putStr "x^20*z^30*x^12\n";
     testes
 }
 

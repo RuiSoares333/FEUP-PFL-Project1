@@ -146,7 +146,6 @@ No programa há uma secção de testes onde se podem observar exemplos de utiliz
 > Produto de 'x^20* z^30' e 'z^90* x^12' =    x^32*z^120
 
 ### **Derivar um Polinómio**
-
 > Derivada de '5 + 10*2 + 25' em ordem a 'x' =    0
 >
 > Derivada de '2* x^2 + 5* x + 2* x^3' em ordem a 'x' =    5 + 4* x + 6*x^2

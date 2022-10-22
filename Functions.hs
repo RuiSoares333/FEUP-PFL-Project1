@@ -78,7 +78,7 @@ juntaNoSoma l = NoSoma '+' (juntaNoSoma (take n l))  (juntaNoSoma (drop n l))
 -- recebe um polinomio e a variavel a partir do qual se vai fazer a derivada
 -- retorna o polinomio derivado
 derivPoly :: String -> String -> String
-derivPoly a s = myNormPoly (myDerivPoly (paraArv (parseString a)) s)
+derivPoly a s = myNormPoly (myDerivPoly (paraArv (parseString (normPoly a))) s)
 
 
 -- recebe uma arvore que representa um polinomio e uma string que representa a variavel a partir do qual se vai fazer a derivada
